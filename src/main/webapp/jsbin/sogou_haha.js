@@ -106,18 +106,24 @@ page.open('http://m.haha.sogou.com/new/', settings, function(status) {
 			var rec = [];
 			$items.each(function(i) {
 				var $item = $(this);
-				var title = $item.find('h2 a').text();
+				var $title = $item.find('h2.tit a');
+				var title = $title.text();
+				var href = $title.attr('href');
 				var note = $item.find('p.info a').html();
 				var $img = $item.find('p.img>a>img');
 				var imgs = [];
 				if ($img) {
-					imgs.push(ImgTools.GetOrgiPicUrl4Sogou($img.attr('src')));
+					var img = ImgTools.GetOrgiPicUrl4Sogou($img.attr('src'));
+					if(img!=''){
+						imgs.push(img);
+					}
 				}
 				rec.push({
 					'recordMd5Value': $.md5(title),
 					'title': title,
 					'summary': note || '',
-					'imgs': imgs
+					'imgs': imgs,
+					'srcUrl':'http://m.haha.sogou.com/'+href
 				});
 			});
 			var clientPost = {};

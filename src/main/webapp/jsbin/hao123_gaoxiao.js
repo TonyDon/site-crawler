@@ -76,16 +76,22 @@ page.open('http://www.hao123.com/gaoxiao?pn=1', settings, function(status) {
 			var rec = [];
 			$items.each(function(i) {
 				var $item = $(this);
-				var title = $item.find('a.title').text();
+				var $title = $item.find('a.title');
+				var title = $title.text();
+				var href  = $title.attr('href');
 				var $img = $item.find('img[selector="pic"]');
 				var imgs = [];
 				if ($img) {
-					imgs.push(ImgTools.GetOrgiPicUrl4Hao123($img.attr('img-src')));
+					var img = ImgTools.GetOrgiPicUrl4Hao123($img.attr('img-src'));
+					if(img!=''){
+						imgs.push(img);
+					}
 				}
 				rec.push({
 					'recordMd5Value': $.md5(title),
 					'title': title,
-					'imgs': imgs
+					'imgs': imgs,
+					'srcUrl':'http://www.hao123.com/'+href
 				});
 			});
 			var clientPost = {};

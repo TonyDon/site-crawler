@@ -6,6 +6,7 @@
 
 package com.uuola.app.sitecrawler.dto;
 
+import java.io.File;
 import java.util.List;
 
 
@@ -29,6 +30,14 @@ public class InfoRecord {
     private String content;
     
     private List<String> imgs;
+    
+    private File tempFile;
+    
+    private List<String> remoteImgUrls;
+    
+    private boolean existError = false;
+    
+    private int tryTimes = 0;
 
     
     public String getSrcUrl() {
@@ -92,6 +101,62 @@ public class InfoRecord {
     public void setRecordMd5Value(String recordMd5Value) {
         this.recordMd5Value = recordMd5Value;
     }
+
+    
+    public File getTempFile() {
+        return tempFile;
+    }
+
+
+
+    
+    public void setTempFile(File tempFile) {
+        this.tempFile = tempFile;
+    }
+
+
+
+    
+    public List<String> getRemoteImgUrls() {
+        return remoteImgUrls;
+    }
+
+
+
+    
+    public void setRemoteImgUrls(List<String> remoteImgUrls) {
+        this.remoteImgUrls = remoteImgUrls;
+    }
+
+
+
+    
+    public boolean isExistError() {
+        return existError;
+    }
+
+
+
+    
+    public void setExistError(boolean existError) {
+        this.existError = existError;
+    }
+
+
+
+    
+    public int getTryTimes() {
+        return tryTimes;
+    }
+
+
+
+    
+    public void increaseTryTimes() {
+        this.tryTimes++;
+    }
+
+
 
     @Override
     public String toString() {
