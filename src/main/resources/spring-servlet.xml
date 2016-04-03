@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="
+     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+     http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd
+     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd 
+     http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
+
+
+	<mvc:default-servlet-handler default-servlet-name="default" />
+	<!-- the web default servlet <mvc:resources mapping="/static/js/**" location="/static/js/" 
+		cache-period="2592000"/> <mvc:resources mapping="/static/style/**" location="/static/style/" 
+		cache-period="2592000"/> <mvc:resources mapping="/static/image/**" location="/static/image/" 
+		cache-period="2592000"/> -->
+
+	<!-- <bean class="org.springframework.web.servlet.view.BeanNameViewResolver" /> -->
+	<!-- upload file --> 
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+	p:defaultEncoding="utf-8"
+	p:maxInMemorySize="131072"
+	p:maxUploadSize="2048000"
+	/>
+
+
+	<bean id="myContentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManager">
+	<constructor-arg>
+		<array>
+			<!-- 以下策略存在顺序关系  -->
+			<!-- 使用路径扩展名视图展现策略 -->
+			<bean class="org.springframework.web.accept.PathExtensionContentNegotiationStrategy">
+				<constructor-arg>
+					<map>
+						<entry key="json" value="application/json" />
+						<entry key="html" value="text/html" />
+					</map>
+				</constructor-arg>
+			</bean>
+			<!-- 使用请求参数format=? 视图展现策略 
+			<bean class="org.springframework.web.accept.ParameterContentNegotiationStrategy">
+				<property name="parameterName" value="format" />
+				<constructor-arg>
+					<map>
+						<entry key="json" value="application/json" />
+						<entry key="html" value="text/html" />
+					</map>
+				</constructor-arg>
+			</bean>
+			-->
+			<!-- 启用header Accept 信息识别视图展现策略 -->
+			<bean class="org.springframework.web.accept.HeaderContentNegotiationStrategy" />
+			
+			<!-- 默认视图展现策略 -->
+			<bean class="org.springframework.web.accept.FixedContentNegotiationStrategy">
+				<constructor-arg value="text/html"/>
+			</bean>
+		</array>
+	</constructor-arg>
+	</bean>
+	
+	
+	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+<!-- 	
+		usage : contentNegotiationManager
+		more see : ContentNegotiationManagerFactoryBean
+		<property name="ignoreAcceptHeader" value="false" />
+		<property name="mediaTypes">
+			<map>
+				<entry key="json" value="application/json" />
+				<entry key="xml" value="application/xml" />
+				<entry key="html" value="text/html" />
+			</map>
+		</property>
+		<property name="defaultContentType" value="text/html" />
+		<property name="favorParameter" value="false" /> 
+-->
+		<property name="contentNegotiationManager" ref="myContentNegotiationManager" />
+		<property name="viewResolvers">
+			<list>
+				<bean
+					class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+					<property name="order" value="1"/>
+					<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+					<property name="prefix" value="/views/" />
+					<property name="suffix" value=".jsp" />
+				</bean>
+				<!-- 可加入其他视图技术如volacity 等 -->
+			</list>
+        </property>
+		<property name="defaultViews">
+			<list>
+				<bean class="com.uuola.txweb.framework.view.json.MappingFastJsonView">
+					<property name="disableCaching" value="false"/>
+				</bean>
+				<!-- <bean class="com.uuola.txweb.framework.view.xml.XmlView">
+					<property name="marshaller">
+						<bean class="org.springframework.oxm.xstream.XStreamMarshaller"
+							p:autodetectAnnotations="true" />
+					</property>
+				</bean> -->
+			</list>
+		</property>
+	</bean>
+
+	<!-- 注意：	<mvc:annotation-driven /> 启用该注解，
+	annotationMethodHandlerAdapter 将失效
+	spring将自动加载默认转换器，而不是此处的配置
+	-->
+	<bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<property name="converters">
+			<list>
+				<bean class="com.uuola.txweb.framework.converts.StringToDateConverter"/>
+			</list>
+		</property>
+	</bean>
+	<bean id="webBindingInitializer" class="org.springframework.web.bind.support.ConfigurableWebBindingInitializer">
+		<property name="conversionService" ref="conversionService"/>
+	</bean>
+	<!-- Restful mvc begin -->
+	<!-- spring 3.1.0 -->
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<property name="webBindingInitializer" ref="webBindingInitializer"></property>
+		<!-- @ResponseBody inject converters requestBody或httpEntity中数据的类型转换  -->
+		<property name="messageConverters">
+			<list>
+				<bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+<!-- 					<property name="supportedMediaTypes">
+						<list>
+							<value>application/json;charset=UTF-8</value>
+						</list>
+					</property> -->
+				</bean>
+				<bean class="org.springframework.http.converter.FormHttpMessageConverter" />
+				<bean class="org.springframework.http.converter.BufferedImageHttpMessageConverter" />
+				<bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+				<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+					<property name="supportedMediaTypes">
+						<list>
+							<value>text/html;charset=UTF-8</value>
+							<value>text/plain;charset=UTF-8</value>
+							<value>text/javascript;charset=UTF-8</value>
+						</list>
+					</property>
+					<property name="writeAcceptCharset" value="false"/>
+				</bean>
+				<bean class="org.springframework.http.converter.ResourceHttpMessageConverter" />
+			</list>
+		</property>
+	</bean>
+	<bean id="handlerMapping" 
+		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"
+		p:order="1" />
+		
+	<import resource="spring-action.xml"/>
+
+</beans>
