@@ -20,7 +20,6 @@ import com.uuola.app.sitecrawler.dto.ClientPostEntity;
 import com.uuola.app.sitecrawler.dto.InfoRecord;
 import com.uuola.app.sitecrawler.service.RecordQueueManager;
 import com.uuola.commons.CollectionUtil;
-import com.uuola.commons.JsonUtil;
 import com.uuola.txweb.framework.action.BaseAction;
 
 
