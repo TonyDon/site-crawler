@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.uuola.app.sitecrawler.component.RecordQueueManager;
 import com.uuola.app.sitecrawler.dto.ClientPostEntity;
 import com.uuola.app.sitecrawler.dto.InfoRecord;
-import com.uuola.app.sitecrawler.service.RecordQueueManager;
 import com.uuola.commons.CollectionUtil;
 import com.uuola.txweb.framework.action.BaseAction;
 

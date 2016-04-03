@@ -4,7 +4,7 @@
  * Copy Right@ uuola
  */ 
 
-package com.uuola.app.sitecrawler.service;
+package com.uuola.app.sitecrawler.component;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
