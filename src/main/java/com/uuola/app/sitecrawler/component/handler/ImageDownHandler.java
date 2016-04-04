@@ -10,15 +10,13 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.jsoup.Connection;
-import org.jsoup.Connection.Method;
-import org.jsoup.Connection.Response;
-import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +25,7 @@ import com.uuola.commons.CollectionUtil;
 import com.uuola.commons.StringUtil;
 import com.uuola.commons.coder.KeyGenerator;
 import com.uuola.commons.file.FileUtil;
+import com.uuola.commons.http.HttpUtil;
 
 
 /**
@@ -68,36 +67,34 @@ public class ImageDownHandler {
     }
     
     private static String downToDisk(InfoRecord rec, String imgUrl) {
-        Connection conn = Jsoup.connect(imgUrl);
-        conn.referrer(getReferer(rec.getSrcUrl()));
-        conn.header("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1");
-        conn.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-        conn.header("Accept-Language", "zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3");
-        conn.header("Connection", "keep-alive");
-        conn.header("Host", getHost(rec.getSrcUrl()));
-        conn.ignoreContentType(true);
-        conn.timeout(8000);
+        ByteBuffer byteBuffer = HttpUtil.doGetForBytes(imgUrl, "utf-8", 5000, 18000, null, makeProxyHeaders(rec));
         String imagePath = null;
         OutputStream os = null;
         try {
-            Response res = conn.method(Method.GET).execute();
-            if (HttpURLConnection.HTTP_OK == res.statusCode()) {
-                byte[] body = res.bodyAsBytes();
-                if (null != body && body.length > 8) {
-                    File outImage = extractImageFile(rec.getTempFile(), imgUrl);
-                    os = new BufferedOutputStream(new FileOutputStream(outImage));
-                    IOUtils.write(body, os);
-                    imagePath = outImage.getAbsolutePath();
-                }
+            byte[] body = byteBuffer.array();
+            if (null != body && body.length > 8) {
+                File outImage = extractImageFile(rec.getTempFile(), imgUrl);
+                os = new BufferedOutputStream(new FileOutputStream(outImage));
+                IOUtils.write(body, os);
+                imagePath = outImage.getAbsolutePath();
             }
         } catch (Exception e) {
             log.error("", e);
-        }finally{
+        } finally {
             IOUtils.closeQuietly(os);
         }
         return imagePath;
     }
     
+    private static Map<String, Object> makeProxyHeaders(InfoRecord rec) {
+        Map<String, Object> headers = new HashMap<String,Object>();
+        headers.put("Referer", getReferer(rec.getSrcUrl()));
+        headers.put("Host", getHost(rec.getSrcUrl()));
+        headers.put("DNT", "1");
+        headers.put("Connection", "keep-alive");
+        headers.put("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1");
+        return headers;
+    }
     
     /**
      * ${root}/imgmall.tg.com.cn/group2/M00/00/1E/CgooeVachCSEidIvAAF9XjtddYY346.jpg
