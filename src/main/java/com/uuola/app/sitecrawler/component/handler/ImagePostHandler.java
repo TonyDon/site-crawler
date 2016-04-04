@@ -15,6 +15,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.uuola.app.sitecrawler.constants.Config;
 import com.uuola.app.sitecrawler.dto.InfoRecord;
 import com.uuola.commons.CollectionUtil;
 import com.uuola.commons.JsonUtil;
@@ -31,7 +32,6 @@ import com.uuola.commons.http.HttpUtil;
  */
 public class ImagePostHandler {
     
-    private final static String POST_URL = "http://986001.com/txcms-web/uploader/store.json";
 
     private static Logger log = LoggerFactory.getLogger(ImagePostHandler.class);
     
@@ -69,7 +69,7 @@ public class ImagePostHandler {
         params.put("dir", "image");
         params.put("needThumb", "false");
         params.put("mpfile", new File(local));
-        String ret = HttpUtil.doPostAsFormdata(POST_URL, "utf-8", null, params, null, null);
+        String ret = HttpUtil.doPostAsFormdata(Config.IMAGE_POST_URL, "utf-8", null, params, null, null);
         if(null == ret){
             return null;
         }

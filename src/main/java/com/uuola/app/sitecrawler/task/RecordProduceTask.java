@@ -8,6 +8,7 @@ package com.uuola.app.sitecrawler.task;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -31,7 +32,9 @@ public class RecordProduceTask implements Runnable {
     public void run() {
         String currWorkDir = WebContext.getRealPath("/jsbin");
         File wd = new File(currWorkDir);
+        sleep(2);
         exec(new String[]{"D:\\ProgramFiles\\phantomjs\\bin\\pjs.exe", currWorkDir+"\\sogou_haha.js"}, wd);
+        sleep(2);
         exec(new String[]{"D:\\ProgramFiles\\phantomjs\\bin\\pjs.exe", currWorkDir+"\\hao123_gaoxiao.js"}, wd);
     }
 
@@ -41,6 +44,13 @@ public class RecordProduceTask implements Runnable {
             Runtime.getRuntime().exec(args, null, workDir);
         } catch (IOException e) {
             log.error("exec()", e);
+        }
+    }
+    
+    private void sleep(int sec){
+        try {
+            TimeUnit.SECONDS.sleep(sec);
+        } catch (InterruptedException e) {
         }
     }
 }

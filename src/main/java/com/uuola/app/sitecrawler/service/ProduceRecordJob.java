@@ -24,7 +24,7 @@ import com.uuola.app.sitecrawler.task.RecordProduceTask;
  * 创建日期: 2016年4月3日
  * </pre>
  */
-@Component("produceRecordJob")
+//@Component("produceRecordJob")
 public class ProduceRecordJob implements InitializingBean {
     
     @Autowired

@@ -10,14 +10,15 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.jsoup.Connection;
+import org.jsoup.Connection.Method;
+import org.jsoup.Connection.Response;
+import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +27,6 @@ import com.uuola.commons.CollectionUtil;
 import com.uuola.commons.StringUtil;
 import com.uuola.commons.coder.KeyGenerator;
 import com.uuola.commons.file.FileUtil;
-import com.uuola.commons.http.HttpUtil;
 
 
 /**
@@ -67,31 +67,37 @@ public class ImageDownHandler {
         }
     }
     
-    
     private static String downToDisk(InfoRecord rec, String imgUrl) {
-        ByteBuffer byteBuffer = HttpUtil.doGetForBytes(imgUrl, "utf-8", 5000, 8000, makeProxyHeaders(rec.getSrcUrl(), imgUrl));
-        if (null == byteBuffer) {
-            return null;
-        }
-        byte[] bytes = byteBuffer.array();
-        if(null == bytes || bytes.length<8){
-            return null;
-        }
-        File outImage = extractImageFile(rec.getTempFile(), imgUrl);
+        Connection conn = Jsoup.connect(imgUrl);
+        conn.referrer(getReferer(rec.getSrcUrl()));
+        conn.header("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1");
+        conn.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        conn.header("Accept-Language", "zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3");
+        conn.header("Connection", "keep-alive");
+        conn.header("Host", getHost(rec.getSrcUrl()));
+        conn.ignoreContentType(true);
+        conn.timeout(8000);
         String imagePath = null;
         OutputStream os = null;
         try {
-            os = new BufferedOutputStream(new FileOutputStream(outImage));
-            IOUtils.write(bytes, os);
-            os.flush();
-            imagePath = outImage.getAbsolutePath();
+            Response res = conn.method(Method.GET).execute();
+            if (HttpURLConnection.HTTP_OK == res.statusCode()) {
+                byte[] body = res.bodyAsBytes();
+                if (null != body && body.length > 8) {
+                    File outImage = extractImageFile(rec.getTempFile(), imgUrl);
+                    os = new BufferedOutputStream(new FileOutputStream(outImage));
+                    IOUtils.write(body, os);
+                    imagePath = outImage.getAbsolutePath();
+                }
+            }
         } catch (Exception e) {
-            log.error("error {}", ExceptionUtils.getRootCauseMessage(e));
-        } finally {
+            log.error("", e);
+        }finally{
             IOUtils.closeQuietly(os);
         }
         return imagePath;
     }
+    
     
     /**
      * ${root}/imgmall.tg.com.cn/group2/M00/00/1E/CgooeVachCSEidIvAAF9XjtddYY346.jpg
@@ -109,16 +115,6 @@ public class ImageDownHandler {
         }
             imgName = KeyGenerator.getUUID() + "." + extName;
         return new File(storeDir, imgName);
-    }
-
-    private static Map<String, Object> makeProxyHeaders(String srcUrl, String url) {
-        Map<String, Object> headers = new HashMap<String,Object>();
-        headers.put("Referer", getReferer(srcUrl));
-        headers.put("Host", getHost(url));
-        headers.put("DNT", "1");
-        headers.put("Connection", "close");
-        headers.put("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1");
-        return headers;
     }
     
     public static String getHost(String url) {
