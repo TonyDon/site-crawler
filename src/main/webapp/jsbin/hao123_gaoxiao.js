@@ -81,17 +81,20 @@ page.open('http://www.hao123.com/gaoxiao?pn=1', settings, function(status) {
 				var href  = $title.attr('href');
 				var $img = $item.find('img[selector="pic"]');
 				var imgs = [];
+				var catId = 37; // 37段子，38图片
 				if ($img) {
 					var img = ImgTools.GetOrgiPicUrl4Hao123($img.attr('img-src'));
 					if(img!=''){
+						catId = 38 ;
 						imgs.push(img);
 					}
 				}
 				rec.push({
-					'recordMd5Value': $.md5(title),
+					'recordMd5Value': $.md5(title+href),
 					'title': title,
 					'imgs': imgs,
-					'srcUrl':'http://www.hao123.com/'+href
+					'srcUrl':'http://www.hao123.com/'+href,
+					'catId' : catId
 				});
 			});
 			var clientPost = {};

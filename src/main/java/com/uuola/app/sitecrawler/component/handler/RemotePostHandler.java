@@ -6,11 +6,18 @@
 
 package com.uuola.app.sitecrawler.component.handler;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.client.RestTemplate;
 
 import com.uuola.app.sitecrawler.dto.InfoRecord;
 import com.uuola.commons.JsonUtil;
+import com.uuola.txweb.framework.action.IConstant;
 
 
 /**
@@ -22,12 +29,27 @@ import com.uuola.commons.JsonUtil;
  */
 public class RemotePostHandler {
     
+    private final static String POST_URL = "http://986001.com/txcms-web/spi/record/post.json";
+    
     private static Logger log = LoggerFactory.getLogger(RemotePostHandler.class);
 
-    public static void process(InfoRecord rec) {
-        if(!rec.isExistError()){
-            //TODO post remote action
-            log.info("post remote:" + JsonUtil.toJSONString(rec));
+    public static void process(RestTemplate restTemplate, InfoRecord rec) {
+        if (rec.isExistError()) {
+            return;
+        }
+        HttpHeaders headers = new HttpHeaders();
+        MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+        headers.setContentType(type);
+        headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+        try {
+            HttpEntity<String> formEntity = new HttpEntity<String>(JsonUtil.toJSONString(rec), headers);
+            String response = restTemplate.postForObject(POST_URL, formEntity, String.class);
+            Map result = JsonUtil.toJsonObject(response, Map.class);
+            Object flag = result.get(IConstant.UPDATE_RESULT_ATTR);
+            log.info("post record to server, result:" + flag + ", rec.srcUrl:" + rec.getSrcUrl());
+        } catch (Exception e) {
+            rec.setExistError(true);
+            log.error("process() rec.srcUrl:" + rec.getSrcUrl(), e);
         }
     }
 

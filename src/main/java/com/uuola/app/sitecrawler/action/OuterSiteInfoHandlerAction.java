@@ -74,4 +74,5 @@ public class OuterSiteInfoHandlerAction extends BaseAction {
     public String queueInfo(){
         return "curr queue count: " + RecordQueueManager.getCurrCount();
     }
+    
 }

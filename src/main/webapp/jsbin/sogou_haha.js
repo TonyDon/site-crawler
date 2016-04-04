@@ -112,18 +112,21 @@ page.open('http://m.haha.sogou.com/new/', settings, function(status) {
 				var note = $item.find('p.info a').html();
 				var $img = $item.find('p.img>a>img');
 				var imgs = [];
+				var catId = 37; // 37段子，38图片
 				if ($img) {
 					var img = ImgTools.GetOrgiPicUrl4Sogou($img.attr('src'));
 					if(img!=''){
+						catId = 38 ;
 						imgs.push(img);
 					}
 				}
 				rec.push({
-					'recordMd5Value': $.md5(title),
+					'recordMd5Value': $.md5(title+href),
 					'title': title,
 					'summary': note || '',
 					'imgs': imgs,
-					'srcUrl':'http://m.haha.sogou.com/'+href
+					'srcUrl':'http://m.haha.sogou.com/'+href,
+					'catId' : catId
 				});
 			});
 			var clientPost = {};

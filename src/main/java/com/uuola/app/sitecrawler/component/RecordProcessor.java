@@ -10,6 +10,7 @@ import java.io.File;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.client.RestTemplate;
 
 import com.uuola.app.sitecrawler.component.handler.HtmlHandler;
 import com.uuola.app.sitecrawler.component.handler.ImageDownHandler;
@@ -28,6 +29,8 @@ import com.uuola.app.sitecrawler.dto.InfoRecord;
 public class RecordProcessor {
     
     private static Logger log = LoggerFactory.getLogger(RecordProcessor.class);
+    
+    private static RestTemplate restTemplate = new RestTemplate();
 
     public static void execute(File tempDir, InfoRecord rec){
         log.info("begin execute() for record:" + rec);
@@ -39,7 +42,7 @@ public class RecordProcessor {
         // html 清理
         HtmlHandler.process(rec);
         // post 远端请求
-        RemotePostHandler.process(rec);
+        RemotePostHandler.process(restTemplate, rec);
         log.info("end execute() for record:" + rec);
     }
 }

@@ -86,7 +86,7 @@ public class ImageDownHandler {
             os.flush();
             imagePath = outImage.getAbsolutePath();
         } catch (Exception e) {
-            log.error("downLocal error {}", ExceptionUtils.getRootCauseMessage(e));
+            log.error("error {}", ExceptionUtils.getRootCauseMessage(e));
         } finally {
             IOUtils.closeQuietly(os);
         }
@@ -106,7 +106,6 @@ public class ImageDownHandler {
         String extName = FileUtil.getFileExt(imgName);
         if (null == extName || extName.isEmpty()) {
             extName = "jpg";
-            imgName = imgName + "." + extName; // 设置默认后缀名
         }
             imgName = KeyGenerator.getUUID() + "." + extName;
         return new File(storeDir, imgName);

@@ -67,7 +67,7 @@ public class ImagePostHandler {
     private static String uploadToServer(String local) {
         Map<String, Object> params = new LinkedHashMap<String,Object>();
         params.put("dir", "image");
-        params.put("needThumb", "true");
+        params.put("needThumb", "false");
         params.put("mpfile", new File(local));
         String ret = HttpUtil.doPostAsFormdata(POST_URL, "utf-8", null, params, null, null);
         if(null == ret){

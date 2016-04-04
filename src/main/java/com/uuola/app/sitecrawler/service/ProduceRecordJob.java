@@ -40,7 +40,7 @@ public class ProduceRecordJob implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        startTask("7 0/30 * * * ?"); // 每隔30分钟触发一次
+        startTask("7 0/2 * * * ?"); // 每隔30分钟触发一次
     }
     
     public void startTask(String cronTime) {

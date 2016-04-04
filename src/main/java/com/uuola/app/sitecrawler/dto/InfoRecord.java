@@ -31,6 +31,8 @@ public class InfoRecord {
     
     private String content;
     
+    private Integer catId;
+    
     private List<String> imgs;
     
     @Transient
@@ -87,6 +89,20 @@ public class InfoRecord {
     }
 
     
+    
+    public Integer getCatId() {
+        return catId;
+    }
+
+
+
+    
+    public void setCatId(Integer catId) {
+        this.catId = catId;
+    }
+
+
+
     public List<String> getImgs() {
         return imgs;
     }
