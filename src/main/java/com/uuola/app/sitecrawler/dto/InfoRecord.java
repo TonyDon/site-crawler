@@ -9,6 +9,8 @@ package com.uuola.app.sitecrawler.dto;
 import java.io.File;
 import java.util.List;
 
+import javax.persistence.Transient;
+
 
 /**
  * <pre>
@@ -31,9 +33,13 @@ public class InfoRecord {
     
     private List<String> imgs;
     
+    @Transient
     private File tempFile;
     
     private List<String> remoteImgUrls;
+    
+    @Transient
+    private List<String> localImgPaths;
     
     private boolean existError = false;
     
@@ -131,6 +137,20 @@ public class InfoRecord {
 
 
     
+    
+    public List<String> getLocalImgPaths() {
+        return localImgPaths;
+    }
+
+
+
+    
+    public void setLocalImgPaths(List<String> localImgPaths) {
+        this.localImgPaths = localImgPaths;
+    }
+
+
+
     public boolean isExistError() {
         return existError;
     }
@@ -160,6 +180,8 @@ public class InfoRecord {
 
     @Override
     public String toString() {
-        return "InfoRecord [recordMd5Value=" + recordMd5Value + ", srcUrl=" + srcUrl + ", title=" + title + "]";
+        return "InfoRecord [srcUrl=" + srcUrl + ", title=" + title + "]";
     }
+
+    
 }

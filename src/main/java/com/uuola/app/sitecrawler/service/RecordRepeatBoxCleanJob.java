@@ -1,5 +1,5 @@
 /*
- * @(#)ConsumeRecordJob.java 2016年4月3日
+ * @(#)RecordRepeatBoxCleanJob.java 2016年4月4日
  * 
  * Copy Right@ uuola
  */ 
@@ -14,19 +14,20 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
 
-import com.uuola.app.sitecrawler.task.RecordConsumeTask;
+import com.uuola.app.sitecrawler.task.RepeatBoxCleanTask;
 
 
 /**
  * <pre>
- * 抓取记录消费端JOB
+ * 清理记录重复抓取记录池缓存
  * @author tangxiaodong
- * 创建日期: 2016年4月3日
+ * 创建日期: 2016年4月4日
  * </pre>
  */
-@Component("consumeRecordJob")
-public class ConsumeRecordJob  implements InitializingBean{
-    
+@Component("recordRepeatBoxCleanJob")
+public class RecordRepeatBoxCleanJob implements InitializingBean {
+
+
     @Autowired
     private TaskScheduler scheduler;
     
@@ -40,11 +41,11 @@ public class ConsumeRecordJob  implements InitializingBean{
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        startTask("2 0/35 * * * ?"); // 每隔10分钟触发一次
+        startTask("17 12 5 * * ?"); // 每天5点12分17秒触发一次
     }
     
     public void startTask(String cronTime) {
-        future = scheduler.schedule(new RecordConsumeTask(), new CronTrigger(cronTime));
+        future = scheduler.schedule(new RepeatBoxCleanTask(), new CronTrigger(cronTime));
     }
 
 }

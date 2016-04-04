@@ -4,7 +4,7 @@
  * Copy Right@ uuola
  */ 
 
-package com.uuola.app.sitecrawler.component;
+package com.uuola.app.sitecrawler.task;
 
 import java.io.File;
 import java.io.IOException;

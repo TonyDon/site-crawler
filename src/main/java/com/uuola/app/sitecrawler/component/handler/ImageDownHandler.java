@@ -4,7 +4,7 @@
  * Copy Right@ uuola
  */ 
 
-package com.uuola.app.sitecrawler.component;
+package com.uuola.app.sitecrawler.component.handler;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -36,38 +36,39 @@ import com.uuola.commons.http.HttpUtil;
  * 创建日期: 2016年4月3日
  * </pre>
  */
-public class ImageHandler {
+public class ImageDownHandler {
     
-    private static Logger log = LoggerFactory.getLogger(ImageHandler.class);
+    private static Logger log = LoggerFactory.getLogger(ImageDownHandler.class);
 
     public static void process(InfoRecord rec) {
-        List<String> imgUrls = rec.getImgs();
-        if(CollectionUtil.isEmpty(imgUrls)){
-            return ;
+        if (rec.isExistError()) {
+            return;
         }
-        List<String> remoteImgUrls =  new ArrayList<String>(imgUrls.size());
-        for(String imgUrl : imgUrls){
-            if(StringUtil.isEmpty(imgUrl)){
+        List<String> imgUrls = rec.getImgs();
+        if (CollectionUtil.isEmpty(imgUrls)) {
+            return;
+        }
+        List<String> localImgPaths = new ArrayList<String>(imgUrls.size());
+        for (String imgUrl : imgUrls) {
+            if (StringUtil.isEmpty(imgUrl)) {
                 continue;
             }
-            // get请求获取img数据 
-            String localImgUrl = downLocal(rec, imgUrl);
-            if(StringUtil.isEmpty(localImgUrl)){
-                log.warn("down img error : " + imgUrl);
+            // get请求获取img数据
+            String localImg = downToDisk(rec, imgUrl);
+            if (StringUtil.isEmpty(localImg)) {
+                log.warn("down img error : " + rec);
                 rec.setExistError(true);
-            }else{
-                // post local image to remote image upload 
-                log.info("down img success:" + localImgUrl);
-                remoteImgUrls.add("remote :" + localImgUrl);
+                break;
             }
+            localImgPaths.add(localImg);
         }
-        if(remoteImgUrls.size()>0){
-            rec.setRemoteImgUrls(remoteImgUrls);
+        if (localImgPaths.size() > 0) {
+            rec.setLocalImgPaths(localImgPaths);
         }
     }
     
     
-    private static String downLocal(InfoRecord rec, String imgUrl) {
+    private static String downToDisk(InfoRecord rec, String imgUrl) {
         ByteBuffer byteBuffer = HttpUtil.doGetForBytes(imgUrl, "utf-8", 5000, 8000, makeProxyHeaders(rec.getSrcUrl(), imgUrl));
         if (null == byteBuffer) {
             return null;

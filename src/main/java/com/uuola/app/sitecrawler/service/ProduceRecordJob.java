@@ -14,7 +14,7 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
 
-import com.uuola.app.sitecrawler.component.RecordProduceTask;
+import com.uuola.app.sitecrawler.task.RecordProduceTask;
 
 
 /**
@@ -40,7 +40,7 @@ public class ProduceRecordJob implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        startTask("15 0/1 * * * ?"); // 每隔30分钟触发一次
+        startTask("7 0/30 * * * ?"); // 每隔30分钟触发一次
     }
     
     public void startTask(String cronTime) {

@@ -4,7 +4,7 @@
  * Copy Right@ uuola
  */ 
 
-package com.uuola.app.sitecrawler.component;
+package com.uuola.app.sitecrawler.component.handler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

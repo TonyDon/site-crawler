@@ -4,7 +4,7 @@
  * Copy Right@ uuola
  */ 
 
-package com.uuola.app.sitecrawler.component;
+package com.uuola.app.sitecrawler.task;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -12,6 +12,8 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.uuola.app.sitecrawler.component.RecordProcessor;
+import com.uuola.app.sitecrawler.component.RecordQueueManager;
 import com.uuola.app.sitecrawler.dto.InfoRecord;
 import com.uuola.commons.listener.WebContext;
 
@@ -40,6 +42,7 @@ public class RecordConsumeTask implements Runnable {
         for (;;) {
             InfoRecord record = RecordQueueManager.take();
             if (null != record) {
+                times = 0;
                 RecordProcessor.execute(tempDir, record);
                 if(record.isExistError() && record.getTryTimes()<3){
                     record.setExistError(false);
@@ -49,7 +52,7 @@ public class RecordConsumeTask implements Runnable {
             } else {
                 times++;
                 try {
-                    TimeUnit.MILLISECONDS.sleep(1000);
+                    TimeUnit.MILLISECONDS.sleep(800);
                 } catch (InterruptedException e) {
                     log.warn("sleep()", e);
                 }

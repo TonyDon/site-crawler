@@ -6,9 +6,7 @@
 
 package com.uuola.app.sitecrawler.action;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.uuola.app.sitecrawler.component.RecordQueueManager;
+import com.uuola.app.sitecrawler.component.RecordRepeaterCrawlManager;
 import com.uuola.app.sitecrawler.dto.ClientPostEntity;
 import com.uuola.app.sitecrawler.dto.InfoRecord;
 import com.uuola.commons.CollectionUtil;
@@ -33,18 +32,11 @@ import com.uuola.txweb.framework.action.BaseAction;
 @Controller
 @RequestMapping("/outerSiteInfoHandler")
 public class OuterSiteInfoHandlerAction extends BaseAction {
-    
-    private static Set<String> existUUIDs = new HashSet<String>();
-    
-    private static Set<String> existMd5 = new HashSet<String>();
 
     @RequestMapping(value="/gaosiao", method = RequestMethod.POST)
     @ResponseBody
     public String gaosiao(@RequestBody ClientPostEntity clientPost){
-        if(existUUIDs.contains(clientPost.getRequestId())){
-            return "doing...";
-        };
-        existUUIDs.add(clientPost.getRequestId());
+        log.info("requestId:"+clientPost.getRequestId());
         InfoRecord rec = clientPost.getSingleRecord();
         checkAndPushQueue(rec);
         List<InfoRecord> records = clientPost.getRecords();
@@ -56,9 +48,8 @@ public class OuterSiteInfoHandlerAction extends BaseAction {
         return "ok";
     }
 
-    private synchronized void checkAndPushQueue(InfoRecord rec) {
-        if(null != rec && !existMd5.contains(rec.getRecordMd5Value())){
-            existMd5.add(rec.getRecordMd5Value());
+    private void checkAndPushQueue(InfoRecord rec) {
+        if(null != rec && !RecordRepeaterCrawlManager.exist(rec.getRecordMd5Value())){
             RecordQueueManager.push(rec);
         }
     }
@@ -66,10 +57,7 @@ public class OuterSiteInfoHandlerAction extends BaseAction {
     @RequestMapping(value="/qiqu", method = RequestMethod.POST)
     @ResponseBody
     public String qiqu(@RequestBody ClientPostEntity clientPost){
-        if(existUUIDs.contains(clientPost.getRequestId())){
-            return "doing...";
-        };
-        existUUIDs.add(clientPost.getRequestId());
+        log.info("requestId:"+clientPost.getRequestId());
         InfoRecord rec = clientPost.getSingleRecord();
         checkAndPushQueue(rec);
         List<InfoRecord> records = clientPost.getRecords();

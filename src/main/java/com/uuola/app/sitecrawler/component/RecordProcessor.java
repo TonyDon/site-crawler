@@ -11,6 +11,10 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.uuola.app.sitecrawler.component.handler.HtmlHandler;
+import com.uuola.app.sitecrawler.component.handler.ImageDownHandler;
+import com.uuola.app.sitecrawler.component.handler.ImagePostHandler;
+import com.uuola.app.sitecrawler.component.handler.RemotePostHandler;
 import com.uuola.app.sitecrawler.dto.InfoRecord;
 
 
@@ -28,8 +32,10 @@ public class RecordProcessor {
     public static void execute(File tempDir, InfoRecord rec){
         log.info("begin execute() for record:" + rec);
         rec.setTempFile(tempDir);
-        // 图片预处理
-        ImageHandler.process(rec);
+        // 图片下载本地
+        ImageDownHandler.process(rec);
+        // 图片上传远端服务器
+        ImagePostHandler.process(rec);
         // html 清理
         HtmlHandler.process(rec);
         // post 远端请求

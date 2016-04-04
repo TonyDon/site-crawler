@@ -4,7 +4,7 @@
  * Copy Right@ uuola
  */ 
 
-package com.uuola.app.sitecrawler.component;
+package com.uuola.app.sitecrawler.component.handler;
 
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
@@ -23,6 +23,9 @@ import com.uuola.commons.StringUtil;
 public class HtmlHandler {
 
     public static void process(InfoRecord rec) {
+        if(rec.isExistError()){
+            return ;
+        }
         String summary = rec.getSummary();
         if (StringUtil.isNotEmpty(summary)) {
             String s1 = summary;

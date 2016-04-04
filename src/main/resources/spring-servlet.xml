@@ -161,5 +161,5 @@
 	<import resource="spring-action.xml"/>
 	
 	<task:annotation-driven scheduler="scheduler"/>
-	<task:scheduler id="scheduler" pool-size="2"/>
+	<task:scheduler id="scheduler" pool-size="3"/>
 </beans>
