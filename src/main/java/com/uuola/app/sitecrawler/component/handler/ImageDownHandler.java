@@ -67,7 +67,7 @@ public class ImageDownHandler {
     }
     
     private static String downToDisk(InfoRecord rec, String imgUrl) {
-        ByteBuffer byteBuffer = HttpUtil.doGetForBytes(imgUrl, "utf-8", 5000, 18000, null, makeProxyHeaders(rec));
+        ByteBuffer byteBuffer = HttpUtil.doGetForBytes(imgUrl, "utf-8", 5000, 18000, 3070000, makeProxyHeaders(rec));
         String imagePath = null;
         OutputStream os = null;
         try {
