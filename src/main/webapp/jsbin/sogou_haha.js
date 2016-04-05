@@ -49,10 +49,10 @@ page.onResourceRequested = function(requestData, request) {
 		console.log('The url of the request is matching. Aborting: ' + requestData['url']);
 		request.abort();
 	}
-	if ((/.+?(\.jpg|\.gif|\.png)/gi).test(requestData['url']) || requestData.headers['Content-Type'].indexOf('image') !== -1) {
-		console.log('The url of the request is matching. Aborting: ' + requestData['url']);
-		request.abort();
-	}
+//	if ((/.+?(\.jpg|\.gif|\.png)/gi).test(requestData['url']) || requestData.headers['Content-Type'].indexOf('image') !== -1) {
+//		console.log('The url of the request is matching. Aborting: ' + requestData['url']);
+//		request.abort();
+//	}
 };
 page.onResourceReceived = function(res) {
 	console.log('received: ' + res.url);

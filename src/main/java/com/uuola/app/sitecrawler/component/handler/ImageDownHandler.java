@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +19,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.uuola.app.sitecrawler.constants.Config;
 import com.uuola.app.sitecrawler.dto.InfoRecord;
 import com.uuola.commons.CollectionUtil;
 import com.uuola.commons.StringUtil;
@@ -47,27 +47,26 @@ public class ImageDownHandler {
         if (CollectionUtil.isEmpty(imgUrls)) {
             return;
         }
-        List<String> localImgPaths = new ArrayList<String>(imgUrls.size());
+        Map<String, String> localSrcUrl = new HashMap<String, String>();
         for (String imgUrl : imgUrls) {
-            if (StringUtil.isEmpty(imgUrl)) {
-                continue;
+            if (StringUtil.isNotEmpty(imgUrl)) {
+                // get请求获取img数据
+                String localImg = downToDisk(rec, imgUrl);
+                if (StringUtil.isEmpty(localImg)) {
+                    log.warn("down img error : " + rec);
+                    rec.setExistError(true);
+                    break;
+                }
+                localSrcUrl.put(localImg, imgUrl);
             }
-            // get请求获取img数据
-            String localImg = downToDisk(rec, imgUrl);
-            if (StringUtil.isEmpty(localImg)) {
-                log.warn("down img error : " + rec);
-                rec.setExistError(true);
-                break;
-            }
-            localImgPaths.add(localImg);
         }
-        if (localImgPaths.size() > 0) {
-            rec.setLocalImgPaths(localImgPaths);
+        if (localSrcUrl.size() > 0) {
+            rec.setLocalSrcUrl(localSrcUrl);
         }
     }
     
     private static String downToDisk(InfoRecord rec, String imgUrl) {
-        ByteBuffer byteBuffer = HttpUtil.doGetForBytes(imgUrl, "utf-8", 32000, 32000, 3070000, makeProxyHeaders(rec));
+        ByteBuffer byteBuffer = HttpUtil.doGetForBytes(imgUrl, "utf-8", 32000, 32000, 128+Config.UPLOAD_MAX_FILE_SIZE, makeProxyHeaders(rec));
         String imagePath = null;
         OutputStream os = null;
         try {

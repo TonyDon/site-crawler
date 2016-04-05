@@ -8,8 +8,7 @@ package com.uuola.app.sitecrawler.dto;
 
 import java.io.File;
 import java.util.List;
-
-import javax.persistence.Transient;
+import java.util.Map;
 
 
 /**
@@ -35,13 +34,11 @@ public class InfoRecord {
     
     private List<String> imgs;
     
-    @Transient
-    private File tempFile;
+    private transient File tempFile;
     
     private List<String> remoteImgUrls;
     
-    @Transient
-    private List<String> localImgPaths;
+    private Map<String, String>  localSrcUrl;
     
     private boolean existError = false;
     
@@ -51,8 +48,6 @@ public class InfoRecord {
     public String getSrcUrl() {
         return srcUrl;
     }
-
-    
 
     public void setSrcUrl(String srcUrl) {
         this.srcUrl = srcUrl;
@@ -89,18 +84,14 @@ public class InfoRecord {
     }
 
     
-    
     public Integer getCatId() {
         return catId;
     }
-
-
 
     
     public void setCatId(Integer catId) {
         this.catId = catId;
     }
-
 
 
     public List<String> getImgs() {
@@ -112,13 +103,10 @@ public class InfoRecord {
         this.imgs = imgs;
     }
 
-
     
     public String getRecordMd5Value() {
         return recordMd5Value;
     }
-
-
     
     public void setRecordMd5Value(String recordMd5Value) {
         this.recordMd5Value = recordMd5Value;
@@ -129,42 +117,30 @@ public class InfoRecord {
         return tempFile;
     }
 
-
-
     
     public void setTempFile(File tempFile) {
         this.tempFile = tempFile;
     }
-
-
 
     
     public List<String> getRemoteImgUrls() {
         return remoteImgUrls;
     }
 
-
-
     
     public void setRemoteImgUrls(List<String> remoteImgUrls) {
         this.remoteImgUrls = remoteImgUrls;
     }
 
-
-
     
-    
-    public List<String> getLocalImgPaths() {
-        return localImgPaths;
+    public Map<String, String> getLocalSrcUrl() {
+        return localSrcUrl;
     }
 
-
-
     
-    public void setLocalImgPaths(List<String> localImgPaths) {
-        this.localImgPaths = localImgPaths;
+    public void setLocalSrcUrl(Map<String, String> localSrcUrl) {
+        this.localSrcUrl = localSrcUrl;
     }
-
 
 
     public boolean isExistError() {
@@ -172,27 +148,19 @@ public class InfoRecord {
     }
 
 
-
-    
     public void setExistError(boolean existError) {
         this.existError = existError;
     }
 
 
-
-    
     public int getTryTimes() {
         return tryTimes;
     }
-
-
 
     
     public void increaseTryTimes() {
         this.tryTimes++;
     }
-
-
 
     @Override
     public String toString() {

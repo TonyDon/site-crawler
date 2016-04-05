@@ -21,6 +21,7 @@ import com.uuola.commons.CollectionUtil;
 import com.uuola.commons.JsonUtil;
 import com.uuola.commons.StringUtil;
 import com.uuola.commons.http.HttpUtil;
+import com.uuola.txweb.framework.action.IConstant;
 
 
 /**
@@ -35,28 +36,30 @@ public class ImagePostHandler {
 
     private static Logger log = LoggerFactory.getLogger(ImagePostHandler.class);
     
-    public static void process(InfoRecord rec){
+    
+    
+    public static void process(InfoRecord rec) {
         if (rec.isExistError()) {
             return;
         }
-        List<String> localImgPaths = rec.getLocalImgPaths();
-        if(CollectionUtil.isEmpty(localImgPaths)){
-            return ;
+        Map<String, String> localSrcUrl = rec.getLocalSrcUrl();
+        if (CollectionUtil.isEmpty(localSrcUrl)) {
+            return;
         }
-        List<String> remoteImgUrls = new ArrayList<String>(localImgPaths.size());
-        for(String local : localImgPaths){
-            if (StringUtil.isEmpty(local)) {
-                continue;
+        List<String> remoteImgUrls = new ArrayList<String>(localSrcUrl.size());
+        for (Map.Entry<String, String> e : localSrcUrl.entrySet()) {
+            if (StringUtil.isNotEmpty(e.getKey())) {
+                // post remote image
+                String remoteUrl = uploadToServer(e.getKey());
+                // success add remoteImgUrls
+                if (StringUtil.isEmpty(remoteUrl)) {
+                    log.warn("post img error : " + rec);
+                    // use src url as server url
+                    remoteImgUrls.add(e.getValue());
+                } else {
+                    remoteImgUrls.add(remoteUrl);
+                }
             }
-            // post remote image
-            String remoteUrl = uploadToServer(local);
-            // success add  remoteImgUrls
-            if(StringUtil.isEmpty(remoteUrl)){
-                log.warn("post img error : " + rec);
-                rec.setExistError(true);
-                break;
-            }
-            remoteImgUrls.add(remoteUrl);
         }
         if (remoteImgUrls.size() > 0) {
             rec.setRemoteImgUrls(remoteImgUrls);
@@ -65,22 +68,30 @@ public class ImagePostHandler {
 
     @SuppressWarnings("rawtypes")
     private static String uploadToServer(String local) {
-        Map<String, Object> params = new LinkedHashMap<String,Object>();
+        File localImage = new File(local);
+        // 大于1M的文件使用源图地址直接返回
+        if (localImage.length() > Config.UPLOAD_MAX_FILE_SIZE) {
+            return null;
+        }
+        Map<String, Object> params = new LinkedHashMap<String, Object>();
         params.put("dir", "image");
         params.put("needThumb", "false");
-        params.put("mpfile", new File(local));
+        params.put("mpfile", localImage);
         String ret = HttpUtil.doPostAsFormdata(Config.IMAGE_POST_URL, "utf-8", null, params, null, null);
-        if(null == ret){
+        if (null == ret) {
+            return null;
+        }
+        if (ret != null && ret.toLowerCase().contains(IConstant.EXCEPTION)) {
             return null;
         }
         Map result = JsonUtil.toJsonObject(ret, Map.class);
-        String url = (String)result.get("url");
-        String message = (String)result.get("message");
+        String url = (String) result.get("url");
+        String message = (String) result.get("message");
         String error = String.valueOf(result.get("error"));
-        if("0".equals(error) && StringUtil.isNotEmpty(url)){
+        if ("0".equals(error) && StringUtil.isNotEmpty(url)) {
             return url;
-        }else{
-            log.warn("uploadToServer() fail: local[" + local+"], message:" + message);
+        } else {
+            log.warn("uploadToServer() fail: local[" + local + "], message:" + message);
         }
         return null;
     }
