@@ -34,6 +34,8 @@ public class InfoRecord {
     
     private List<String> imgs;
     
+    private String videoUrl;
+    
     private transient File tempFile;
     
     private List<String> remoteImgUrls;
@@ -99,6 +101,16 @@ public class InfoRecord {
     }
 
     
+    
+    public String getVideoUrl() {
+        return videoUrl;
+    }
+
+    
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
+    }
+
     public void setImgs(List<String> imgs) {
         this.imgs = imgs;
     }
