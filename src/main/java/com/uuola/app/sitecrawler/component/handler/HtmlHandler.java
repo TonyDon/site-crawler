@@ -6,6 +6,8 @@
 
 package com.uuola.app.sitecrawler.component.handler;
 
+import java.util.regex.Pattern;
+
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 
@@ -21,6 +23,8 @@ import com.uuola.commons.StringUtil;
  * </pre>
  */
 public class HtmlHandler {
+    
+    private static Pattern EMOJI_CHAR_REGEX = Pattern.compile ("[\ud83c\udc00-\ud83c\udfff]|[\ud83d\udc00-\ud83d\udfff]|[\u2600-\u27ff]", Pattern.UNICODE_CASE | Pattern.CASE_INSENSITIVE) ;
 
     public static void process(InfoRecord rec) {
         if(rec.isExistError()){
@@ -42,7 +46,8 @@ public class HtmlHandler {
         }
         String content = rec.getContent();
         if (StringUtil.isNotEmpty(content)) {
-            rec.setContent(Jsoup.clean(content, Whitelist.basic()));
+            rec.setContent(Jsoup.clean(content, Whitelist.basicWithImages()));
+            rec.setContent(EMOJI_CHAR_REGEX.matcher(rec.getContent()).replaceAll("*"));
         }
     }
 

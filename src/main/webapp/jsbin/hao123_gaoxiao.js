@@ -52,7 +52,7 @@ var PostCrawlResult = function(data) {
 	},
 	data : postData
 };
-	page.open('http://986001.com/site-crawler/outerSiteInfoHandler/gaosiao', settings, function(status) {
+	page.open('http://986001.com/site-crawler/outerSiteInfoHandler/resovle', settings, function(status) {
 		if (status !== 'success') {
 			console.log('Unable to post!');
 		} else {
@@ -63,7 +63,7 @@ var PostCrawlResult = function(data) {
 };
 
 
-page.open('http://www.hao123.com/gaoxiao?pn=1', settings, function(status) {
+page.open('http://www.hao123.com/gaoxiao?pn=200', settings, function(status) {
 	page.injectJs("tool.js");
 	page.injectJs("jquery.js");
 	page.injectJs("uuid.js");

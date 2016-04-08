@@ -7,10 +7,11 @@ var settings = {
 	resourceTimeout: 8000,
 	headers: {
 		"Content-Type": "text/html; charset=utf-8",
-		"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-		"User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1",
-		"Host": 'm.haha.sogou.com',
-		"Referer": 'http://m.haha.sogou.com/new/'
+		"Accept": "	text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+		"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0",
+		"Host": 'toutiao.com',
+		"Referer": 'http://toutiao.com/',
+		"Connection" : 'keep-alive'
 	}
 };
 
@@ -42,17 +43,17 @@ page.onRepaintRequested = function() {
 };
 page.onResourceRequested = function(requestData, request) {
 	if ((/http:\/\/.+?\.css/gi).test(requestData['url']) || requestData.headers['Content-Type'] == 'text/css') {
-		console.log('The url of the request is matching. Aborting: ' + requestData['url']);
+		//console.log('The url of the request is matching. Aborting: ' + requestData['url']);
 		request.abort();
 	}
 	if ((/http:\/\/.+?\.baidu\.com/gi).test(requestData['url'])) {
-		console.log('The url of the request is matching. Aborting: ' + requestData['url']);
+		//console.log('The url of the request is matching. Aborting: ' + requestData['url']);
 		request.abort();
 	}
-//	if ((/.+?(\.jpg|\.gif|\.png)/gi).test(requestData['url']) || requestData.headers['Content-Type'].indexOf('image') !== -1) {
-//		console.log('The url of the request is matching. Aborting: ' + requestData['url']);
-//		request.abort();
-//	}
+    if ((/http:\/\/.+?google/gi).test(requestData['url'])) {
+	//console.log('The url of the request is matching. Aborting: ' + requestData['url']);
+	request.abort();
+  }
 };
 page.onResourceReceived = function(res) {
 	console.log('received: ' + res.url);
@@ -67,7 +68,6 @@ page.onError = function(msg, trace) {
   }
   console.error(msgStack.join('\n'));
 };
-
 var PostCrawlResult = function(data) {
 	var postData = JSON.stringify(data);
 	var headers = {
@@ -92,55 +92,48 @@ var PostCrawlResult = function(data) {
 		phantom.exit();
 	});
 };
-//http://m.haha.sogou.com/new/ http://m.haha.sogou.com/video/
-page.open('http://m.haha.sogou.com/text/', settings, function(status) {
+
+page.open('http://toutiao.com/a6270808606888182017/', settings, function(status) {
 	page.injectJs("tool.js");
 	page.injectJs("jquery.js");
 	page.injectJs("uuid.js");
 	page.injectJs("jq.md5.js");
+	page.injectJs("common.js");
 	console.log("Status: " + status);
 	if (status === "success") {
 		var result = page.evaluate(function() {
-			var uuid =  GetUUID();
-			var $items = jQuery('div.item_list').find('div.item');
+			var tgetUrl = 'http://toutiao.com/a6270808606888182017/';
+			var uuid = GetUUID();
 			var rec = [];
-			$items.each(function(i) {
-				var $item = $(this);
-				var $title = $item.find('h2.tit a');
-				var title = $title.text();
-				var href = $title.attr('href');
-				var note = $item.find('p.info a').html();
-				var $img = $item.find('p.img>a>img');
-				var $vid = $item.find('div.article_video>div>video');
-				var imgs = [];
-				var catId = 37; // 37段子，38图片,39视频
-				var vidurl;
-				if ($img) {
-					var img = ImgTools.GetOrgiPicUrl4Sogou($img.attr('src'));
-					if(img!=''){
-						catId = 38 ;
-						imgs.push(img);
-					}
+			var title = $('h1.title').text();
+			var $content = $('div.article-content');
+			var $summary = $('div.article-content p:lt(3)');
+			var $img = $content.find('img:eq(0)');
+			var catId = 28; // 28看世界
+			var imgs = [];
+			var note = '';
+			if ($img) {
+				var img =  $img.attr('src');
+				if (img != '') {
+					imgs.push(img);
 				}
-				if($vid){
-					var img = ImgTools.GetOrgiPicUrl4Sogou($vid.attr('poster'));
-					if(img!=''){
-						imgs.push(img);
-					}
-					vidurl = $vid.attr('src');
-					if(vidurl){
-						catId = 39 ;
-					}
-				}
-				rec.push({
-					'recordMd5Value': $.md5(title+href),
-					'title': title,
-					'summary': note || '',
-					'imgs': imgs,
-					'videoUrl':vidurl || '',
-					'srcUrl':'http://m.haha.sogou.com/'+href,
-					'catId' : catId
-				});
+			}
+			if($summary){
+				note = ut.cutstr($summary.text(), 100);
+			}
+			$content.find('img:eq(0)').remove();
+			$('div.article-content p:has("img")').addClass('text-center');
+			$('div.article-content>img').wrap("<p class='text-center'></p>");
+			$content.find('img').removeAttr('img_height').removeAttr('img_width').removeAttr('onerror');
+			var content = $content.html().replace(/\s{2,}/g,'');
+			rec.push({
+				'recordMd5Value' : $.md5(tgetUrl),
+				'title' : title,
+				'summary' : note,
+				'imgs' : imgs,
+				'srcUrl' : tgetUrl,
+				'catId' : catId,
+				'content' : content
 			});
 			var clientPost = {};
 			clientPost['records'] = rec;
@@ -151,4 +144,3 @@ page.open('http://m.haha.sogou.com/text/', settings, function(status) {
 		PostCrawlResult(result);
 	}
 });
-

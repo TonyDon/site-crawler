@@ -23,3 +23,14 @@ ImgTools.GetOrgiPicUrl4Hao123= function(url){
 	}
 	return url;
 };
+
+ImgTools.GetOrgiPicUrl4MeiPai= function(url){
+	if(!url){
+		return '';
+	}
+	var pos = url.lastIndexOf('!');
+	if(pos>20){
+		return url.substring(0, pos);
+	}
+	return url;
+};

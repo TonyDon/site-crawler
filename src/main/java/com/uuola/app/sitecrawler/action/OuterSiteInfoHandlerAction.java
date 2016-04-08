@@ -33,7 +33,7 @@ import com.uuola.txweb.framework.action.BaseAction;
 @RequestMapping("/outerSiteInfoHandler")
 public class OuterSiteInfoHandlerAction extends BaseAction {
 
-    @RequestMapping(value="/gaosiao", method = RequestMethod.POST)
+    @RequestMapping(value="/resovle", method = RequestMethod.POST)
     @ResponseBody
     public String gaosiao(@RequestBody ClientPostEntity clientPost){
         log.info("requestId:"+clientPost.getRequestId());
@@ -52,21 +52,6 @@ public class OuterSiteInfoHandlerAction extends BaseAction {
         if(null != rec && !RecordRepeaterCrawlManager.exist(rec.getRecordMd5Value())){
             RecordQueueManager.push(rec);
         }
-    }
-    
-    @RequestMapping(value="/qiqu", method = RequestMethod.POST)
-    @ResponseBody
-    public String qiqu(@RequestBody ClientPostEntity clientPost){
-        log.info("requestId:"+clientPost.getRequestId());
-        InfoRecord rec = clientPost.getSingleRecord();
-        checkAndPushQueue(rec);
-        List<InfoRecord> records = clientPost.getRecords();
-        if(CollectionUtil.isNotEmpty(records)){
-            for(InfoRecord record : records){
-                checkAndPushQueue(record);
-            }
-        }
-        return "ok";
     }
     
     @RequestMapping(value="/queueInfo", method = RequestMethod.GET)
