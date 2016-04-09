@@ -45,6 +45,8 @@ public class InfoRecord {
     private boolean existError = false;
     
     private int tryTimes = 0;
+    
+    private Long authorId;
 
     
     public String getSrcUrl() {
@@ -154,6 +156,16 @@ public class InfoRecord {
         this.localSrcUrl = localSrcUrl;
     }
 
+
+    
+    public Long getAuthorId() {
+        return authorId;
+    }
+
+    
+    public void setAuthorId(Long authorId) {
+        this.authorId = authorId;
+    }
 
     public boolean isExistError() {
         return existError;
