@@ -107,7 +107,7 @@ public class ImageDownHandler {
         String imgName = FileUtil.getFileName(url);
         String extName = FileUtil.getFileExt(imgName);
         if (null == extName || extName.isEmpty()) {
-            extName = "jpg";
+            extName = "jpeg"; // 给默认扩展名
         }
             imgName = KeyGenerator.getUUID() + "." + extName;
         return new File(storeDir, imgName);
