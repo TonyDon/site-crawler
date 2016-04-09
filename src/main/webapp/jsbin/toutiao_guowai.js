@@ -46,7 +46,7 @@ page.onResourceRequested = function(requestData, request) {
 		//console.log('The url of the request is matching. Aborting: ' + requestData['url']);
 		request.abort();
 	}
-	if ((/http:\/\/.+?\.baidu\.com/gi).test(requestData['url'])) {
+	if ((/http:\/\/.+?\.baidu/gi).test(requestData['url'])) {
 		//console.log('The url of the request is matching. Aborting: ' + requestData['url']);
 		request.abort();
 	}
@@ -56,7 +56,8 @@ page.onResourceRequested = function(requestData, request) {
   }
 };
 page.onResourceReceived = function(res) {
-	console.log('received: ' + res.url);
+	var url = res.url
+	console.log('received: ' + url.substring(0,32));
 };
 page.onError = function(msg, trace) {
   var msgStack = ['ERROR: ' + msg];
@@ -93,7 +94,7 @@ var PostCrawlResult = function(data) {
 	});
 };
 
-page.open('http://toutiao.com/a6270808606888182017/', settings, function(status) {
+page.open('http://toutiao.com/a6271011205080973569/', settings, function(status) {
 	page.injectJs("tool.js");
 	page.injectJs("jquery.js");
 	page.injectJs("uuid.js");
@@ -102,7 +103,7 @@ page.open('http://toutiao.com/a6270808606888182017/', settings, function(status)
 	console.log("Status: " + status);
 	if (status === "success") {
 		var result = page.evaluate(function() {
-			var tgetUrl = 'http://toutiao.com/a6270808606888182017/';
+			var tgetUrl = 'http://toutiao.com/a6271011205080973569/';
 			var uuid = GetUUID();
 			var rec = [];
 			var title = $('h1.title').text();

@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +48,7 @@ public class ImageDownHandler {
         if (CollectionUtil.isEmpty(imgUrls)) {
             return;
         }
-        Map<String, String> localSrcUrl = new HashMap<String, String>();
+        Map<String, String> localSrcUrl = new LinkedHashMap<String, String>();
         for (String imgUrl : imgUrls) {
             if (StringUtil.isNotEmpty(imgUrl)) {
                 // get请求获取img数据
@@ -126,6 +127,9 @@ public class ImageDownHandler {
                 
             } else if (srcUrl.contains("sogou")) {
                 return "http://www.sogou.com/";
+                
+            } else if (srcUrl.contains("ifeng")) {
+                return "http://news.ifeng.com/";
             }
         }
         return "http://www.baidu.com/";

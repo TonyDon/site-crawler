@@ -93,7 +93,7 @@ var PostCrawlResult = function(data) {
 	});
 };
 //http://m.haha.sogou.com/new/ http://m.haha.sogou.com/video/
-page.open('http://m.haha.sogou.com/text/', settings, function(status) {
+page.open('http://m.haha.sogou.com/new/', settings, function(status) {
 	page.injectJs("tool.js");
 	page.injectJs("jquery.js");
 	page.injectJs("uuid.js");
@@ -151,4 +151,6 @@ page.open('http://m.haha.sogou.com/text/', settings, function(status) {
 		PostCrawlResult(result);
 	}
 });
+
+
 

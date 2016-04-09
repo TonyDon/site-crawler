@@ -47,17 +47,19 @@ public class ImagePostHandler {
             return;
         }
         List<String> remoteImgUrls = new ArrayList<String>(localSrcUrl.size());
+        int posFlagUseSrcUrl = 1 ;
         for (Map.Entry<String, String> e : localSrcUrl.entrySet()) {
             if (StringUtil.isNotEmpty(e.getKey())) {
-                // post remote image
-                String remoteUrl = uploadToServer(e.getKey());
-                // success add remoteImgUrls
+                String remoteUrl = null;
+                if (posFlagUseSrcUrl < 2) { // 如果源图片地址有防盗链，则需要都上传至服务器
+                    remoteUrl = uploadToServer(e.getKey());
+                }
                 if (StringUtil.isEmpty(remoteUrl)) {
-                    log.warn("post img error : " + rec);
-                    // use src url as server url
+                    log.warn("curr use src img url: " + rec);
                     remoteImgUrls.add(e.getValue());
                 } else {
                     remoteImgUrls.add(remoteUrl);
+                    posFlagUseSrcUrl++; // 从第二张图片开始使用源图片地址
                 }
             }
         }
@@ -70,7 +72,7 @@ public class ImagePostHandler {
     private static String uploadToServer(String local) {
         File localImage = new File(local);
         // 大于1M的文件使用源图地址直接返回
-        if (localImage.length() > Config.UPLOAD_MAX_FILE_SIZE) {
+        if (!localImage.exists() || localImage.length() > Config.UPLOAD_MAX_FILE_SIZE) {
             return null;
         }
         Map<String, Object> params = new LinkedHashMap<String, Object>();
@@ -82,6 +84,7 @@ public class ImagePostHandler {
             return null;
         }
         if (ret != null && ret.toLowerCase().contains(IConstant.EXCEPTION)) {
+            log.warn("uploadToServer() fail: local[" + local + "], message:" + ret);
             return null;
         }
         Map result = JsonUtil.toJsonObject(ret, Map.class);

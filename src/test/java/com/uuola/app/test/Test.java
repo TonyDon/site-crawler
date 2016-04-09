@@ -6,6 +6,8 @@
 
 package com.uuola.app.test;
 
+import com.uuola.app.sitecrawler.component.handler.ImageSizeFixHandler;
+
 
 /**
  * <pre>
@@ -25,6 +27,8 @@ public class Test {
         String s1 = url.replaceAll("(http://)|(https://)", "");
         int pos = s1.indexOf('/');
         System.out.println(s1.substring(0, pos));
+        
+        System.out.println(ImageSizeFixHandler.checkAndFixed("C:/Users/tangxiaodong/Desktop/g/1.jpeg"));
     }
 
 }

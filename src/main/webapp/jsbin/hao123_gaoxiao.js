@@ -63,7 +63,7 @@ var PostCrawlResult = function(data) {
 };
 
 
-page.open('http://www.hao123.com/gaoxiao?pn=200', settings, function(status) {
+page.open('http://www.hao123.com/gaoxiao?pn=190', settings, function(status) {
 	page.injectJs("tool.js");
 	page.injectJs("jquery.js");
 	page.injectJs("uuid.js");
