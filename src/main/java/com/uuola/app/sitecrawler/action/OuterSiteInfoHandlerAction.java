@@ -35,7 +35,7 @@ public class OuterSiteInfoHandlerAction extends BaseAction {
 
     @RequestMapping(value="/resovle", method = RequestMethod.POST)
     @ResponseBody
-    public String gaosiao(@RequestBody ClientPostEntity clientPost){
+    public String resovle(@RequestBody ClientPostEntity clientPost){
         log.info("requestId:"+clientPost.getRequestId());
         InfoRecord rec = clientPost.getSingleRecord();
         checkAndPushQueue(rec);
