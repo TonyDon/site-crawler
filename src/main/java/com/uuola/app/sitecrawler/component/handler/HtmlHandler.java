@@ -51,7 +51,7 @@ public class HtmlHandler {
             rec.setSummary(s1);
         }
         String content = rec.getContent();
-        if (StringUtil.isNotEmpty(content)) {
+        if (StringUtil.isNotEmpty(content) && content.length()>12) {
             rec.setContent(Jsoup.clean(content, Whitelist.basicWithImages()));
             rec.setContent(EMOJI_CHAR_REGEX.matcher(rec.getContent()).replaceAll("*"));
         }
