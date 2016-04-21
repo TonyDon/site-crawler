@@ -63,11 +63,11 @@ var PostCrawlResult = function(data) {
 };
 
 
-page.open('http://www.hao123.com/gaoxiao?pn=190', settings, function(status) {
-	page.injectJs("tool.js");
-	page.injectJs("jquery.js");
-	page.injectJs("uuid.js");
-	page.injectJs("jq.md5.js");
+page.open('http://www.hao123.com/gaoxiao?pn=1', settings, function(status) {
+	page.injectJs("lib/tool.js");
+	page.injectJs("lib/jquery.js");
+	page.injectJs("lib/uuid.js");
+	page.injectJs("lib/jq.md5.js");
 	console.log("Status: " + status);
 	if (status === "success") {
 		var result = page.evaluate(function() {
@@ -78,10 +78,12 @@ page.open('http://www.hao123.com/gaoxiao?pn=190', settings, function(status) {
 				var $item = $(this);
 				var $title = $item.find('a.title');
 				var title = $title.text();
+				var $cont = $item.find('p[selector="content"]');
 				var href  = $title.attr('href');
 				var $img = $item.find('img[selector="pic"]');
 				var imgs = [];
 				var catId = 37; // 37段子，38图片
+				var note;
 				if ($img) {
 					var img = ImgTools.GetOrgiPicUrl4Hao123($img.attr('img-src'));
 					if(img!=''){
@@ -89,12 +91,17 @@ page.open('http://www.hao123.com/gaoxiao?pn=190', settings, function(status) {
 						imgs.push(img);
 					}
 				}
+				if($cont){
+					note = $cont.text();
+				}
 				rec.push({
 					'recordMd5Value': $.md5(title+href),
 					'title': title,
+					'summary' : note,
 					'imgs': imgs,
 					'srcUrl':'http://www.hao123.com/'+href,
-					'catId' : catId
+					'catId' : catId,
+					'authorId' : 10003
 				});
 			});
 			var clientPost = {};

@@ -141,7 +141,8 @@ page.open('http://news.ifeng.com/a/20160307/47726772_0.shtml#p=1', settings, fun
 				'imgs' : imgs,
 				'srcUrl' : tgetUrl,
 				'catId' : catId,
-				'content' : cont.join('')
+				'content' : cont.join(''),
+				'authorId' : 10006
 			});
 			var clientPost = {};
 			clientPost['records'] = rec;

@@ -92,12 +92,12 @@ var PostCrawlResult = function(data) {
 		phantom.exit();
 	});
 };
-//http://m.haha.sogou.com/new/ http://m.haha.sogou.com/video/
-page.open('http://m.haha.sogou.com/new/', settings, function(status) {
-	page.injectJs("tool.js");
-	page.injectJs("jquery.js");
-	page.injectJs("uuid.js");
-	page.injectJs("jq.md5.js");
+//http://m.haha.sogou.com/img/ http://m.haha.sogou.com/video/
+page.open('http://m.haha.sogou.com/img/', settings, function(status) {
+	page.injectJs("lib/tool.js");
+	page.injectJs("lib/jquery.js");
+	page.injectJs("lib/uuid.js");
+	page.injectJs("lib/jq.md5.js");
 	console.log("Status: " + status);
 	if (status === "success") {
 		var result = page.evaluate(function() {
@@ -139,7 +139,8 @@ page.open('http://m.haha.sogou.com/new/', settings, function(status) {
 					'imgs': imgs,
 					'videoUrl':vidurl || '',
 					'srcUrl':'http://m.haha.sogou.com/'+href,
-					'catId' : catId
+					'catId' : catId,
+					'authorId' : 10006
 				});
 			});
 			var clientPost = {};
