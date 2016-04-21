@@ -41,7 +41,7 @@ public class RemotePostHandler {
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
         headers.setContentType(type);
         headers.add("Accept", MediaType.APPLICATION_JSON.toString());
-        headers.add("AccessToken", "asdfjklasdkfl");
+        headers.add("AccessToken", "sdf56sadf7sadf8sdf8sdf");
         try {
             HttpEntity<String> formEntity = new HttpEntity<String>(JsonUtil.toJSONString(rec), headers);
             String response = restTemplate.postForObject(Config.RECORD_POST_URL, formEntity, String.class);
