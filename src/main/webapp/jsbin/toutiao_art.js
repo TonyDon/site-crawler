@@ -54,6 +54,18 @@ page.onResourceRequested = function(requestData, request) {
 	//console.log('The url of the request is matching. Aborting: ' + requestData['url']);
 	request.abort();
   }
+    if ((/http:\/\/.+?taobao/gi).test(requestData['url'])) {
+    	//console.log('The url of the request is matching. Aborting: ' + requestData['url']);
+    	request.abort();
+      }
+    if ((/alicdn/gi).test(requestData['url'])) {
+    	//console.log('The url of the request is matching. Aborting: ' + requestData['url']);
+    	request.abort();
+      }
+    if ((/http:\/\/.+?jd/gi).test(requestData['url'])) {
+    	//console.log('The url of the request is matching. Aborting: ' + requestData['url']);
+    	request.abort();
+      }
 };
 page.onResourceReceived = function(res) {
 	var url = res.url
@@ -94,7 +106,7 @@ var PostCrawlResult = function(data) {
 	});
 };
 
-page.open('http://toutiao.com/a6274835302385189378/', settings, function(status) {
+page.open('http://toutiao.com/a6276343335246512385/', settings, function(status) {
 	page.injectJs("lib/tool.js");
 	page.injectJs("lib/jquery.js");
 	page.injectJs("lib/uuid.js");
@@ -103,14 +115,14 @@ page.open('http://toutiao.com/a6274835302385189378/', settings, function(status)
 	console.log("Status: " + status);
 	if (status === "success") {
 		var result = page.evaluate(function() {
-			var tgetUrl = 'http://toutiao.com/a6274835302385189378/';
+			var tgetUrl = 'http://toutiao.com/a6276343335246512385/';
 			var uuid = GetUUID();
 			var rec = [];
 			var title = $('h1.title').text();
 			var $content = $('div.article-content');
 			var $summary = $('div.article-content p:lt(3)');
 			var $img = $content.find('img:eq(0)');
-			var catId = 37; // 28奇趣看世界 ，37段子， 38搞笑图片, 39搞笑视频， 41益智, 40科技 , 42星座
+			var catId = 38; // 28奇趣看世界 ，37段子， 38搞笑图片, 39搞笑视频， 41益智, 40科技 , 42星座
 			var imgs = [];
 			var note = '';
 			if ($img) {

@@ -93,7 +93,7 @@ var PostCrawlResult = function(data) {
 	});
 };
 //http://m.haha.sogou.com/img/ http://m.haha.sogou.com/video/
-page.open('http://m.haha.sogou.com/img/', settings, function(status) {
+page.open('http://m.haha.sogou.com/text/', settings, function(status) {
 	page.injectJs("lib/tool.js");
 	page.injectJs("lib/jquery.js");
 	page.injectJs("lib/uuid.js");
@@ -138,7 +138,7 @@ page.open('http://m.haha.sogou.com/img/', settings, function(status) {
 					'summary': note || '',
 					'imgs': imgs,
 					'videoUrl':vidurl || '',
-					'srcUrl':'http://m.haha.sogou.com/'+href,
+					'srcUrl':'http://m.haha.sogou.com'+href,
 					'catId' : catId,
 					'authorId' : 10006
 				});
