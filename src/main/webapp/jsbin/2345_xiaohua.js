@@ -63,7 +63,7 @@ var PostCrawlResult = function(data) {
 };
 
 
-page.open('http://day.2345.com/index.php?p=2100', settings, function(status) {
+page.open('http://day.2345.com/index.php?p=2096', settings, function(status) {
 	page.injectJs("lib/tool.js");
 	page.injectJs("lib/jquery.js");
 	page.injectJs("lib/uuid.js");
