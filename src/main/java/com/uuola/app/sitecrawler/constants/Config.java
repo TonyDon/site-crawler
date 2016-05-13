@@ -22,11 +22,11 @@ public interface Config {
     
     public final int UPLOAD_MAX_FILE_SIZE = 1560576 ;
     
-    public final int IMG_MAX_WIDTH = 650;
+    public final int IMG_MAX_WIDTH = 640;
     
     public final long NEED_FIX_MAX_SIZE = 512000;
     
-    public final int IMG_FIX_WIDTH = 650;
+    public final int IMG_FIX_WIDTH = 640;
     
     public final String CONT_IMG_REPLACE_TAG = "$IMGS#" ; // $IMGS#1$, $IMGS#2$ ...
 }
