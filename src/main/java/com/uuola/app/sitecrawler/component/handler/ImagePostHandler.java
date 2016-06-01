@@ -79,7 +79,8 @@ public class ImagePostHandler {
         params.put("dir", "image");
         params.put("needThumb", "false");
         params.put("mpfile", localImage);
-        String ret = HttpUtil.doPostAsFormdata(Config.IMAGE_POST_URL, "utf-8", null, params, null, null);
+        Integer timeout = 16000;
+        String ret = HttpUtil.doPostAsFormdata(Config.IMAGE_POST_URL, "utf-8", null, params, timeout, timeout);
         if (null == ret) {
             return null;
         }
