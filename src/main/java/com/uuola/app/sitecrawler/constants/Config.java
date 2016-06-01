@@ -29,4 +29,6 @@ public interface Config {
     public final int IMG_FIX_WIDTH = 640;
     
     public final String CONT_IMG_REPLACE_TAG = "$IMGS#" ; // $IMGS#1$, $IMGS#2$ ...
+    
+    public final String ACCESS_REMOTE_TOKEN= "sdf56sadf7sadf8sdf8sdf";
 }
