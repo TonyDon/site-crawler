@@ -33,19 +33,24 @@ public class RecordProcessor {
     
     private static RestTemplate restTemplate = new RestTemplate();
 
-    public static void execute(File tempDir, InfoRecord rec){
+    public static void execute(File tempDir, InfoRecord rec) {
         log.info("begin execute() for record:" + rec);
-        rec.setTempFile(tempDir);
-        // 图片下载本地
-        ImageDownHandler.process(rec);
-        // 图片大小，类型修复
-        ImageSizeFixHandler.process(rec);
-        // 图片上传远端服务器
-        ImagePostHandler.process(rec);
-        // html 清理, 合并多图到正文中
-        HtmlHandler.process(rec);
-        // post 远端请求
-        RemotePostHandler.process(restTemplate, rec);
+        try {
+            rec.setTempFile(tempDir);
+            // 图片下载本地
+            ImageDownHandler.process(rec);
+            // 图片大小，类型修复
+            ImageSizeFixHandler.process(rec);
+            // 图片上传远端服务器
+            ImagePostHandler.process(rec);
+            // html 清理, 合并多图到正文中
+            HtmlHandler.process(rec);
+            // post 远端请求
+            RemotePostHandler.process(restTemplate, rec);
+        } catch (Exception e) {
+            log.error("处理记录遇到异常，稍后重试", e);
+            rec.setExistError(true);
+        }
         log.info("end execute() for record:" + rec);
     }
 }
