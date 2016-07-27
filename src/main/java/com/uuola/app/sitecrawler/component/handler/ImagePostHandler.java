@@ -47,19 +47,14 @@ public class ImagePostHandler {
             return;
         }
         List<String> remoteImgUrls = new ArrayList<String>(localSrcUrl.size());
-        int posFlagUseSrcUrl = 1 ;
         for (Map.Entry<String, String> e : localSrcUrl.entrySet()) {
             if (StringUtil.isNotEmpty(e.getKey())) {
-                String remoteUrl = null;
-                if (posFlagUseSrcUrl < 2) { // 如果源图片地址有防盗链，则需要都上传至服务器
-                    remoteUrl = uploadToServer(e.getKey());
-                }
+                String remoteUrl = uploadToServer(e.getKey());
                 if (StringUtil.isEmpty(remoteUrl)) {
                     log.warn("curr use src img url: " + rec);
                     remoteImgUrls.add(e.getValue());
                 } else {
                     remoteImgUrls.add(remoteUrl);
-                    posFlagUseSrcUrl++; // 从第二张图片开始使用源图片地址
                 }
             }
         }
